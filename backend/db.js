@@ -1,6 +1,7 @@
 const mongo = require('mongoose');
+require('dotenv').config()
 
-mongo.connect("mongodb+srv://sneha207gupta:rGXN4wSFrN0NkTVy@cluster1.emww0td.mongodb.net/paytm?tls=true");
+mongo.connect(process.env.MONGODB_URL);
 
 const userschema = new mongo.Schema({
     username:{
@@ -33,44 +34,23 @@ const userschema = new mongo.Schema({
     }
 });
 
+
+const accountSchema = new mongo.Schema({
+    userId: {
+        type: mongo.Schema.Types.ObjectId,
+        ref: 'User',
+        required:true
+    },
+    accountBalance: {
+        type: Number,
+        required:true
+    }
+})
+
 const User = mongo.model('User', userschema);
+const Account = mongo.model('Account', accountSchema);
+
 
 module.exports = {
-    User
+    User,Account
 }
-
-// const mongoose = require('mongoose');
-// require('dotenv').config();
-
-// mongoose.connect(process.env.MONGODB_URL);
-
-// const userSchema = new mongoose.Schema({
-//     userName: {
-//         type: String,
-//         required: true,
-//         minLength: 3,
-//         maxLength:30,
-//         trim: true,
-//         unique: true,
-//         lowercase:true,
-//     },
-//     firstName: {
-//         type: String,
-//         required: true,
-//         maxLength:15,
-//         trim: true,
-//     },
-//     lastName: {
-//         type: String,
-//         required: true,
-//         maxLength:15,
-//         trim: true,
-//     },
-//     password: {
-//         type: String,
-//         required: true,
-//         minLength: 8,
-//     },
-// })
-// const User=mongoose.model("User", userSchema);
-// module.exports = { User };

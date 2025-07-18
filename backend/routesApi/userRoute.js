@@ -4,7 +4,7 @@ const zod = require('zod');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const secret = process.env.JWT_SECRET;
-const { User } = require("../db");
+const { User, Account } = require("../db");
 const { authMiddleware } = require('../middleware');
 
 const signUpbody = zod.object({
@@ -24,15 +24,20 @@ router.post("/signUp", async (req, res)=> {
     if (existingUser) {
         return res.status(411).json({ msg: "email already taken" });
     }
-    const user = User.create({
+    const user = await User.create({
         username: req.body.username,  //request's body names are used here
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         password:req.body.password
     })
     const userId = user._id;
+    await Account.create({
+        userId:user._id,
+        accountBalance:1+Math.random()*10000     //assigns a random account balance from 1 to 10000
+    })
     const token = jwt.sign({ userId }, secret);
-    res.json({ msg: "User created successfully", token:token });
+    res.json({ msg: "User created successfully", token: token });
+    
 })
 
 const signInBody = zod.object({
