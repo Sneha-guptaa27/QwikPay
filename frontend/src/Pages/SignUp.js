@@ -4,45 +4,67 @@ import { ClickableText } from "../Components/ClickableText"
 import { Heading } from "../Components/Heading"
 import { Input } from "../Components/Input"
 import { SubHeading } from "../Components/SubHeading"
-import axios from 'axios'
 import { useNavigate } from "react-router-dom"
+import ReactToastContainer from "../Components/toast"
+import api from "../API/api"
 
 export const SignUp = () => {
-    const [password, setPassword] = useState("");
-    const [showpassword, setShowpassword] = useState(false);
+
     const [firstName, setFirstname] = useState("");
     const [lastName, setLastname] = useState("");
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
     const navigate = useNavigate();
+    const [toast, setToast] = useState({ type: "", message: "" })
     return (
 
-        <div className=" h-screen w-screen flex justify-center bg-amber-200">
+        <div className=" h-screen w-screen flex justify-center bg-primary">
             <div className="flex flex-col justify-center ">   
                 <div className=" w-[500px] h-max rounded-lg text-center p-8 bg-white shadow-lg">
                     <Heading title={"SIGN UP"} /> 
                     <SubHeading label={"Enter Your Information To Create An Account"} />
                     <Input label={"First Name"} placeholder={"Enter your first name"} onChange={e=>{setFirstname(e.target.value)}}/>
                     <Input label={"Last Name"} placeholder={"Enter your last name"} onChange={e=>{setLastname(e.target.value)}}/>
-                    <Input label={"Email"} placeholder={"Enter your email address"} onChange={e=>{setUsername(e.target.value)}}/>
-                    <Input label={"Password"} placeholder={"Enter your password"} type={showpassword ? "text" : "password"} onChange={e => { setPassword(e.target.value) }} />
+                    <Input label={"Email"} placeholder={"Enter your email address"} onChange={e=>{setEmail(e.target.value)}}/>
+                    <Input label={"Phone Number"} placeholder={"Enter your Phone Number"} onChange={e => { setPhoneNumber(e.target.value) }}/>
                     
-                    <Button label={"Sign Up"} onClick={async () => {
-                        try {
-                            const response = await axios.post("http://localhost:3000/api/v1/user/signUp", { firstName, lastName, username, password });
-                            console.log("Signup success", response.data);
-                            localStorage.setItem("token", response.data.token);
-                            navigate("/dashboard")
-                        }
-                        
-                        catch (error) {
-                            console.log("Signup failed", error.response?.data || error.message)
-                        }
-                    }} />
+                    <Button label={"SIGN UP"} onClick={
+                        async () => {
+                            try {
+                                const target = email;
+                                const context = "signup";
+                                const channel = "email";
+                                const userData = {
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    phoneNumber: phoneNumber,
+                                }
+                                // 1) ask backend to send OTP
+                                await api.post(
+                                    "/auth/otp/request",
+                                    { target: target, channel: channel, context: context } // email
+                                )
+                                navigate("/otpVerify?&userData=" + userData + "&email=" + email + "&context=" + context);
+                                     
+                            }
+                            catch (err) {
+                                const backendMsg =
+                                    err?.response?.data?.error ||
+                                    err?.response?.data?.message ||
+                                    err?.message;
 
-                    <ClickableText to={"/signIn"} label={"Already have an account?"} buttonText={"Sign In"} />
+                                setToast({
+                                    type: "error",
+                                    message: backendMsg || "Failed to send OTP",
+                                });
+                            
+                            }  
+                        }
+                    } />
+            <ClickableText label={"ALready a User?"} buttonText={"Sign In with email"} to={"/registeredUser"} />
                 </div>
             </div>
-        </div>
-        
+            <ReactToastContainer type={toast.type} message={toast.message}/>
+        </div>  
     )
 }

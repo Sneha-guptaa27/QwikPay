@@ -7,6 +7,7 @@ import { computeHeadingLevel } from "@testing-library/dom";
 export const Users = () => {
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState("");
+  
   useEffect(() => {
     axios
       .get("http://localhost:3000/api/v1/user/userDetails?searchVal=" + filter)

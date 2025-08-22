@@ -1,7 +1,7 @@
 const express = require('express');
 const mongo = require('mongoose');
-const { Account } = require('../db');
-const { authMiddleware } = require('../middleware');
+const  Account  = require("../models/accountSchema");
+const { authMiddleware } = require('../Middleware/authmiddleware');
 const router = express.Router();
 
 router.get("/balance",authMiddleware, async (req, res) => {
@@ -13,7 +13,7 @@ router.post("/transferAmount",authMiddleware, async (req, res)=>{
     session.startTransaction();
     const { amount, to } = req.body;
     const account = await Account.findOne({ userId: req.userId }).session(session) //from which transaction has started(sender's acc)
-    if (!account || account.accountBalance<amount) {
+    if (!account || account.accountBalance<amount) { 
         await session.abortTransaction();
         return res.status(400).json({ msg: "insufficient balance" });
     }

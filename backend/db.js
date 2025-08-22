@@ -1,56 +1,20 @@
 const mongo = require('mongoose');
 require('dotenv').config()
 
-mongo.connect(process.env.MONGODB_URL);
+const { MONGODB_URL } = process.env;
 
-const userschema = new mongo.Schema({
-    username:{
-        type: String,
-        trim: true,
-        minLength: 3,
-        maxLength: 30,
-        lowercase: true,
-        unique: true,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
-        minLength: 6,
-    },
-    firstName: {
-        type: String,
-        trim: true,
-        minLength: 3,
-        maxLength: 30,
-        required: true,
-    },
-    lastName: {
-        type: String,
-        trim: true,
-        minLength: 3,
-        maxLength: 30,
-        required: true,
-    }
-});
+exports.connect = () => {
+	mongo
+		.connect(MONGODB_URL, {
+			useNewUrlparser: true,
+			useUnifiedTopology: true,
+		})
+		.then(console.log(`DB Connection Success`))
+		.catch((err) => {
+			console.log(`DB Connection Failed`);
+			console.log(err);
+			process.exit(1);
+		});
+};
 
 
-const accountSchema = new mongo.Schema({
-    userId: {
-        type: mongo.Schema.Types.ObjectId,
-        ref: 'User',
-        required:true
-    },
-    accountBalance: {
-        type: Number,
-        required:true
-    }
-})
-
-const User = mongo.model('User', userschema);
-const Account = mongo.model('Account', accountSchema);
-
-
-module.exports = {
-    User,Account
-}
