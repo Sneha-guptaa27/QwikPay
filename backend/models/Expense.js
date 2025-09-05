@@ -3,7 +3,11 @@ const { Schema } = mongoose;
 const ExpenseSchema = new Schema({
   _id: { type: String, required: true },
   userId: { type: String, ref: "User", index: true, required: true },
+<<<<<<< Updated upstream
   source: { type: String, enum: ["tx","upload","manual"], required: true },
+=======
+  source: { type: String, enum: ["tx","upload","manual","xls"], required: true },
+>>>>>>> Stashed changes
   txId: String,
   title: String,
   description: String,

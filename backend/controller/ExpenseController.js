@@ -4,6 +4,12 @@ const Attachment = require("../models/Attachment");
 const OCRJob = require("../models/OCRjob");
 const multer = require("multer");
 const upload = multer({ dest: "./uploads/" }); // dev only
+<<<<<<< Updated upstream
+=======
+const { parseXlsx } = require("../utils/xlsImport");
+const fs = require("fs");
+const path = require("path");  // ← add this
+>>>>>>> Stashed changes
 
 // list with filters
 exports.list = async function (req, res) {
@@ -18,15 +24,27 @@ exports.list = async function (req, res) {
   if(min) q.amount.$gte = Number(min);
   if(max) q.amount.$lte = Number(max);
   const items = await Expense.find(q).sort({ date: -1 }).limit(500);
+<<<<<<< Updated upstream
   res.json(items);
+=======
+  res.json(items);``
+>>>>>>> Stashed changes
 };
 
 // manual create
 exports.create = async function (req, res) {
   const body = req.body;
+<<<<<<< Updated upstream
   const exp = await Expense.create({
     _id: uuid(),
     userId: req.user._id,
+=======
+  const user = req.user;
+  console.log(user);
+  const exp = await Expense.create({
+    _id: uuid(),
+    userId: user._id,
+>>>>>>> Stashed changes
     source: "manual",
     title: body.title,
     description: body.description,
@@ -90,8 +108,131 @@ exports.upload = [
       }
     });
 
+<<<<<<< Updated upstream
     res.json({ ok: true, jobId: job._id });
   }
 ];
 
 
+=======
+    res.json({ ok: true, jobId: job._id,attachmentId:att._id});
+  }
+];
+
+exports.getjob = async function (req, res) {
+  const jobId = req.params.jobId;
+  const job = await OCRJob.findOne({ _id: jobId, userId: req.user._id });
+  if(!job) return res.status(404).json({ error: "not_found" });
+  res.json(job);
+}
+
+exports.getAttachment = async function (req, res) {
+  const attId = req.params.id;
+  const att = await Attachment.findOne({ _id: attId, userId: req.user._id });
+  if(!att) return res.status(404).json({ error: "not_found" });
+  res.json(att,"parsed text",att.parsedText);
+};
+
+exports.getAttachmentText = async (req, res) => {
+  const att = await Attachment
+    .findOne({ _id: req.params.id, userId: req.user._id })
+    .select('parsedText')
+    .lean();
+  if (!att) return res.status(404).json({ error: 'not_found' });
+  console.log(att.parsedText);
+res.type('text/plain').send(att.parsedText || '');
+};
+
+// simple keyword-based categorizer (tune these for your data)
+const CATEGORY_RULES = [
+  { cat: "GROCERY",   keys: ["grocery","supermarket","dmart","big bazaar","blinkit","zepto"] },
+  { cat: "FOOD",      keys: ["zomato","swiggy","restaurant","cafe","dominos"] },
+  { cat: "UTILITIES", keys: ["electric","power","gas","water","internet","wifi","broadband"] },
+  { cat: "FUEL",      keys: ["fuel","petrol","diesel","hpcl","bpcl","indianoil","ioc"] },
+  { cat: "RENT",      keys: ["rent"] },
+  { cat: "FEES",      keys: ["fee","charges","charge","surcharge","penalty"] },
+  { cat: "TRANSFER",  keys: ["neft","imps","rtgs","upi","transfer","paytm","phonepe","gpay"] },
+];
+function guessCategory(desc="") {
+  const d = desc.toLowerCase();
+  for (const r of CATEGORY_RULES) if (r.keys.some(k => d.includes(k))) return r.cat;
+  return "OTHER";
+}
+
+// POST /expense/attachment/xls  (multipart: file=<.xls|.xlsx|.csv>)
+exports.uploadXls = [
+  upload.single("file"),
+  async function (req, res) {
+    try {
+      if (!req.file) return res.status(400).json({ error: "file_required" });
+
+      const ext = (path.extname(req.file.originalname) || "").toLowerCase();
+      if (![".xls",".xlsx",".csv"].includes(ext)) {
+        return res.status(400).json({ error: "unsupported_format" });
+      }
+
+      const buffer = fs.readFileSync(req.file.path);
+      const { rows, headersDetected } = parseXlsx(buffer);
+
+      const att = await Attachment.create({
+        _id: uuid(),
+        userId: req.user._id,
+        path: req.file.path,
+        filename: req.file.originalname,
+        mime: req.file.mimetype,
+        size: req.file.size,
+        format: ext === ".csv" ? "csv" : "excel",
+        parsedRows: rows,
+        // optional: also keep a joined text for search
+        parsedText: rows.map(r =>
+          [r.date?.toISOString().slice(0,10), r.description, (r.amountPaise/100).toFixed(2)].join(" | ")
+        ).join("\n")
+      });
+
+      res.status(201).json({
+        ok: true,
+        attachmentId: att._id,
+        rowsCount: rows.length,
+        headersDetected
+      });
+    } catch (err) {
+      console.error("uploadXls error:", err);
+      res.status(500).json({ error: "xls_import_failed", message: err.message });
+    }
+  }
+];
+
+// POST /expense/attachment/:id/commit  -> create Expense docs from parsedRows
+exports.commitXls = async (req, res) => {
+  try {
+    const attId = req.params.id;
+    const att = await Attachment.findOne({ _id: attId, userId: req.user._id });
+    if (!att) return res.status(404).json({ error: "attachment_not_found" });
+
+    // Example: parse rows already extracted and save as expenses
+    if (!att.parsedRows || att.parsedRows.length === 0) {
+      return res.status(400).json({ error: "no_rows_to_commit" });
+    }
+
+    const expenses = await Expense.insertMany(
+      att.parsedRows.map(r => ({
+        _id: uuid(),
+        userId: req.user._id,
+        source: "xls",
+        title: r.description || "Imported Row",
+        description: r.description || "",
+        category:guessCategory(r.description) || "Uncategorized",
+        payee: r.payee || "",
+        amount: r.amountPaise || 0,
+        date: r.date ? new Date(r.date) : new Date(),
+        attachmentId: att._id,
+      }))
+    );
+
+    res.json({ ok: true, committed: expenses.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "commit_failed", message: err.message });
+  }
+};
+>>>>>>> Stashed changes

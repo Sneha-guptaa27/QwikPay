@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 // QwikPayBasic.jsx
 // Minimal React + Tailwind UI for money transfer.
 // - Internal transfer to QwikPay users (search by name/UPI/phone -> picks their upiId)
@@ -364,3 +365,18 @@ export default function PaymentPage() {
     </div>
   );
 }
+=======
+import React from 'react'
+import { SendMoney } from "../Components/SendMoneyInternal";
+
+export default function PaymentPage(){
+  return (
+    <div>
+      <div>
+        <SendMoney/>
+      </div>
+    </div>
+  )
+}
+
+>>>>>>> Stashed changes

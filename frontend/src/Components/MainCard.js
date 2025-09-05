@@ -3,6 +3,7 @@ import { getcurrDate } from "../utils/Date";
 import axios from "axios";
 import { QuickLinks } from "./QuickLinks";
 import SideCard from "./SideCard";
+<<<<<<< Updated upstream
 
 export const MainCard = () => {
   const [balance, setBalance] = useState("");
@@ -10,6 +11,18 @@ export const MainCard = () => {
     const ISTtime = getcurrDate();
     const hours = ISTtime.getHours();
     console.log(hours);
+=======
+import { jwtDecode } from "jwt-decode";
+
+
+export const MainCard = () => {
+  const [balance, setBalance] = useState("");
+  const token = localStorage.getItem("token");
+  
+  const greeting = () => {
+    const ISTtime = getcurrDate();
+    const hours = ISTtime.getHours();
+>>>>>>> Stashed changes
     if (hours < 12) {
       return "GOOD MORNING";
     } else if (hours < 18) {
@@ -18,6 +31,7 @@ export const MainCard = () => {
       return "GOOD EVENING";
     }
   };
+<<<<<<< Updated upstream
   useEffect(() => {
     axios
       .get("http://localhost:3000/api/v1/account/balance", {
@@ -30,6 +44,23 @@ export const MainCard = () => {
   return (
     <div>
       <div className="text-3xl font-semibold text-secondary">{greeting()}, Sneha</div>
+=======
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:3000/api/v1/account/balance", {
+  //       headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+  //     })
+  //     .then((response) => {
+  //       setBalance(response.data.accountBalance);
+  //     });
+  // });
+  //  if (!userData) {
+  //   return <div className="text-2xl text-red-500">Loading user...</div>;
+  // }
+  return (
+    <div>
+      <div className="text-3xl font-semibold text-secondary">{greeting()}</div>
+>>>>>>> Stashed changes
       <div className="flex">
         <div className=" w-[750px] h-[500px] rounded-2xl mt-[10px] bg-gradient-to-r from-secondary  to-third ">
           <div className="flex justify-between p-[60px]  text-white">

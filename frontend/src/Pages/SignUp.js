@@ -9,7 +9,10 @@ import ReactToastContainer from "../Components/toast"
 import api from "../API/api"
 
 export const SignUp = () => {
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     const [firstName, setFirstname] = useState("");
     const [lastName, setLastname] = useState("");
     const [email, setEmail] = useState("");
@@ -44,7 +47,11 @@ export const SignUp = () => {
                                     "/auth/otp/request",
                                     { target: target, channel: channel, context: context } // email
                                 )
+<<<<<<< Updated upstream
                                 navigate("/otpVerify?&userData=" + userData + "&email=" + email + "&context=" + context);
+=======
+                                navigate("/otpVerify?&userData=" + encodeURIComponent(JSON.stringify(userData)) + "&email=" + email + "&context=" + context);
+>>>>>>> Stashed changes
                                      
                             }
                             catch (err) {
