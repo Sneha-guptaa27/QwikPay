@@ -45,18 +45,11 @@ const AccountCreation = () => {
                     // if (!token) {
                     // const refreshToken = await api.post("/auth/refresh");
                     // localStorage.setItem("refreshToken",refreshToken);
-<<<<<<< Updated upstream
-                    // }
-                    const response = await api.post("/account/create", { holderName, bankName, accountNumber, ifsc, pan, initialBalance }, { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }).then(
-                      setOpen(false)
-                    )
-=======
                     // }  
                     await api.post("/account/create", { holderName, bankName, accountNumber, ifsc, pan, initialBalancePaise:initialBalance }, { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }).then(
                       setOpen(false)
                     )
                     
->>>>>>> Stashed changes
                   setToast({type:"success", message:"Account created successfully"})
                   }
                   catch (error) {

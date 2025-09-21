@@ -5,10 +5,6 @@ const OTP = require("../models/Otp");
 const { User } = require("../models/userSchema");
 const { issueTokens } = require("../utils/jwt");
 const { sendMail } = require("../utils/mailer");
-<<<<<<< Updated upstream
-const { Message } = require("twilio/lib/twiml/MessagingResponse");
-=======
->>>>>>> Stashed changes
 
 function genUsernameFromTarget(target) {
   const base = target.replace(/[^a-z0-9]/ig,"").slice(0,10);
@@ -63,18 +59,12 @@ exports.verifyOtp = async function (req, res) {
   let user = await User.findOne({ $or: [{ email: target }, { phone: target }] });
   if(!user && context === "signup") {
     const uid = uuid();
-<<<<<<< Updated upstream
-      const username = genUsernameFromTarget(target);
-      console.log(username);
-    user = await User.create({ _id: uid, userName:username, email: target.includes("@") ? target : undefined, phoneNumber:userData.phoneNumber,firstName:userData.firstName,lastName:userData.lastName });
-=======
     const userName = genUsernameFromTarget(target);
     if (!userName) {
   userName = "user_" + uid;  // guaranteed unique fallback
 }
     console.log(userName);
     user = await User.create({ _id: uid, userName:userName, email: target.includes("@") ? target : undefined, phoneNumber:userData.phoneNumber,firstName:userData.firstName,lastName:userData.lastName });
->>>>>>> Stashed changes
   }
   if(!user) return res.status(404).json({ error: "user_not_found" });
 

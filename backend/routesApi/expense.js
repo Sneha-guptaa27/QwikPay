@@ -1,11 +1,5 @@
 const router = require("express").Router();
 const expCtrl = require("../controller/ExpenseController");
-<<<<<<< Updated upstream
-
-router.post("/list", expCtrl.list);
-router.post("/create", expCtrl.create);
-router.post("/upload", expCtrl.upload);
-=======
 const { authMiddleware } = require("../Middleware/authmiddleware");
 
 router.get("/list",authMiddleware, expCtrl.list);
@@ -17,6 +11,7 @@ router.get("/attachment/text/:id", authMiddleware, expCtrl.getAttachmentText);
 // NEW Excel endpoints:
 router.post('/attachment/xls', authMiddleware, expCtrl.uploadXls);
 router.post('/attachment/:id/commit', authMiddleware, expCtrl.commitXls);
->>>>>>> Stashed changes
+
+
 
 module.exports = router;

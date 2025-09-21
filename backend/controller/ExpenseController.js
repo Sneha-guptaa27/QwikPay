@@ -4,12 +4,9 @@ const Attachment = require("../models/Attachment");
 const OCRJob = require("../models/OCRjob");
 const multer = require("multer");
 const upload = multer({ dest: "./uploads/" }); // dev only
-<<<<<<< Updated upstream
-=======
 const { parseXlsx } = require("../utils/xlsImport");
 const fs = require("fs");
 const path = require("path");  // ← add this
->>>>>>> Stashed changes
 
 // list with filters
 exports.list = async function (req, res) {
@@ -24,27 +21,17 @@ exports.list = async function (req, res) {
   if(min) q.amount.$gte = Number(min);
   if(max) q.amount.$lte = Number(max);
   const items = await Expense.find(q).sort({ date: -1 }).limit(500);
-<<<<<<< Updated upstream
-  res.json(items);
-=======
   res.json(items);``
->>>>>>> Stashed changes
 };
 
 // manual create
 exports.create = async function (req, res) {
   const body = req.body;
-<<<<<<< Updated upstream
-  const exp = await Expense.create({
-    _id: uuid(),
-    userId: req.user._id,
-=======
   const user = req.user;
   console.log(user);
   const exp = await Expense.create({
     _id: uuid(),
     userId: user._id,
->>>>>>> Stashed changes
     source: "manual",
     title: body.title,
     description: body.description,
@@ -108,13 +95,6 @@ exports.upload = [
       }
     });
 
-<<<<<<< Updated upstream
-    res.json({ ok: true, jobId: job._id });
-  }
-];
-
-
-=======
     res.json({ ok: true, jobId: job._id,attachmentId:att._id});
   }
 ];
@@ -235,4 +215,3 @@ exports.commitXls = async (req, res) => {
     res.status(500).json({ error: "commit_failed", message: err.message });
   }
 };
->>>>>>> Stashed changes

@@ -32,7 +32,7 @@ function App() {
           <Route path='/payMoney' element={<PaymentPage />} />
           <Route path='/payMoneyExternally' element={<ExternalPayment />} />
           <Route path="/paymentHistory" element={<PaymentHistory />} />
-          <Route path="/expense" element={<Expenses/>} />
+          <Route path="/expense" element={<Expenses />} />
          </Routes>
      </BrowserRouter>
    </>

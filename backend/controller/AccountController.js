@@ -12,12 +12,8 @@ async function createUPIFromPhone(phone) {
 }
 
 exports.createAccount = async function (req, res) {
-<<<<<<< Updated upstream
-    const user = req.user;
-=======
   const user = req.user;
   console.log(user);
->>>>>>> Stashed changes
     const { holderName, bankName, accountNumber, ifsc, pan, initialBalancePaise } = req.body;
     if (!accountNumber || !pan) {
         res.status(400).json("Account Number and Pan are required Fields")
@@ -32,11 +28,7 @@ exports.createAccount = async function (req, res) {
     ifsc,
     pan,
     upiId:upiId,
-<<<<<<< Updated upstream
-    currentBalance: initialBalancePaise || 0
-=======
     currentBalance: initialBalancePaise
->>>>>>> Stashed changes
   });
   return res.json(acc);
 };

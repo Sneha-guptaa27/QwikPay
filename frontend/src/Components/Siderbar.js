@@ -10,11 +10,7 @@ export const Sidebar = () => {
             <div className="flex flex-col bg-primary h-full ">
                 <div className="flex  p-[20px] font-bold text-l space-x-3 mt-[20px]">
                      <div className="mt-[2px]"><FaHome /></div>
-<<<<<<< Updated upstream
-                    <div><Link>HOME</Link></div>
-=======
                     <div><Link to={"/HomePage"}>HOME</Link></div>
->>>>>>> Stashed changes
                 </div>
                 <div className="flex  p-[20px] font-bold text-l space-x-3">
                     <div className="mt-[2px]"><FaSearch/></div>

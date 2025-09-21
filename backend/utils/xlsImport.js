@@ -8,7 +8,7 @@ const PA  = n => Math.round(n * 100);
 const parseDate = s => {
   if (typeof s === "number") {
     const o = XLSX.SSF.parse_date_code(s);     // Excel serial date
-    return new Date(o.y, o.m - 1, o.d);
+    return new Date(o.y, o.m+1, o.d);
   }
   const d = dayjs(String(s).trim(), [
     "YYYY-MM-DD","DD/MM/YYYY","MM/DD/YYYY","DD-MMM-YYYY","D/M/YYYY","DD.MM.YYYY"

@@ -7,11 +7,7 @@ const api = axios.create({
 
 // Add token to every request
 api.interceptors.request.use(config => {
-<<<<<<< Updated upstream
-  const token = localStorage.getItem("accessToken");
-=======
   const token = localStorage.getItem("token");
->>>>>>> Stashed changes
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -21,11 +17,7 @@ api.interceptors.response.use(
   res => {
     const newAccessToken = res.headers["x-new-access-token"];
     if (newAccessToken) {
-<<<<<<< Updated upstream
-      localStorage.setItem("accessToken", newAccessToken);
-=======
       localStorage.setItem("token", newAccessToken);
->>>>>>> Stashed changes
     }
     return res;
   },
@@ -42,11 +34,7 @@ api.interceptors.response.use(
         );
         console.log(refreshRes);
         const newToken = refreshRes.data.access;
-<<<<<<< Updated upstream
-        localStorage.setItem("accessToken", newToken);
-=======
         localStorage.setItem("token", newToken);
->>>>>>> Stashed changes
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest); // retry
       } catch (refreshErr) {

@@ -10,11 +10,7 @@ import api from "../API/api";
 
 export const OtpVerification = () => {
   const [searchParams] = useSearchParams();
-<<<<<<< Updated upstream
-  const userData = searchParams.get("userData");
-=======
   const userData = JSON.parse(searchParams.get("userData"));
->>>>>>> Stashed changes
   const email = searchParams.get("email");
   const context = searchParams.get("context");
   const [otp, setOTP] = useState("");
@@ -52,17 +48,10 @@ export const OtpVerification = () => {
               try {
                 const verify = await api.post(
                   "/auth/otp/verify",
-<<<<<<< Updated upstream
-                  { userData:userData ,target:email,code:otp,context:context }
-                );
-                
-                localStorage.setItem("token",verify.data.access);
-=======
                   {userData:userData ,target:email,code:otp,context:context }
                 );
                 localStorage.setItem("token", verify.data.access);
                 navigate("/HomePage");
->>>>>>> Stashed changes
               } catch (err) {
                 console.error(err);
                 setToast({ type: "error", message: "Server error" });

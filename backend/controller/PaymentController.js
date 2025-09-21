@@ -22,17 +22,10 @@ async function internalTransfer({ fromId, toUpiId, amountPaise, note, idempotenc
     if(!from) throw new Error("from_not_found");
     if(!to) throw new Error("to_not_found");
     if(from.currentBalance < amountPaise) throw new Error("insufficient_balance");
-<<<<<<< Updated upstream
-
-    from.currentBalance -= amountPaise;
-    to.currentBalance += amountPaise;
-
-=======
     from.currentBalance -= amountPaise;
     to.currentBalance += amountPaise;
     console.log(from.currentBalance)
     console.log(to.currentBalance)
->>>>>>> Stashed changes
     await from.save({ session });
     await to.save({ session });
 
@@ -57,11 +50,7 @@ async function internalTransfer({ fromId, toUpiId, amountPaise, note, idempotenc
       amount: amountPaise,
       narrative: note,
       idempotencyKey
-<<<<<<< Updated upstream
-    }], { session });
-=======
     }], { session, ordered: true });
->>>>>>> Stashed changes
 
     await session.commitTransaction();
     return { ok: true, txIds: [txDebitId, txCreditId] };
@@ -77,11 +66,7 @@ exports.transfer = async function (req, res) {
   const { fromAccountId, toUpiId, amountPaise, note } = req.body;
   const idempotencyKey = req.headers["idempotency-key"] || null;
   try {
-<<<<<<< Updated upstream
-    const result = await internalTransfer({ fromId: fromAccountId, toUpiId, amountPaise, note, idempotencyKey });
-=======
     const result = await internalTransfer({ fromId: fromAccountId, toUpiId,amountPaise, note, idempotencyKey });
->>>>>>> Stashed changes
     return res.json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });
@@ -120,8 +105,6 @@ exports.externalPayment = async function (req, res) {
 
   return res.json({ ok: true, txId: tx._id, providerRef });
 };
-<<<<<<< Updated upstream
-=======
 
 //payment History 
 exports.paymentHistory = async function (req, res) {
@@ -142,4 +125,3 @@ exports.paymentHistory = async function (req, res) {
     }
   
 }
->>>>>>> Stashed changes
