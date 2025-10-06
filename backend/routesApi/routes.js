@@ -7,6 +7,7 @@ const expenseRouter = require("./expense");
 const paymentRouter = require("./payment");
 const splitRouter = require("./split");
 const searchRouter = require("./searchUser");
+const analyticsRouter = require("./analytics");
 
 
 router.use("/account", accRouter);
@@ -16,6 +17,7 @@ router.use("/expense", expenseRouter);
 router.use("/payment", paymentRouter);
 router.use("/split", splitRouter);
 router.use("/users", searchRouter);
+router.use("/analytics",analyticsRouter);
 
 
 module.exports = router;

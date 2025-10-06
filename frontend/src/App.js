@@ -14,6 +14,8 @@ import PaymentPage from './Pages/PaymentPage';
 import ExternalPayment from './Pages/ExternalPaymentPage.js';
 import PaymentHistory from './Pages/PaymentHistory.js';
 import Expenses from './Pages/Expense.js';
+import QwikSplitPage from './Pages/QwikSplitPage.js';
+
 
 
 function App() {
@@ -33,6 +35,7 @@ function App() {
           <Route path='/payMoneyExternally' element={<ExternalPayment />} />
           <Route path="/paymentHistory" element={<PaymentHistory />} />
           <Route path="/expense" element={<Expenses />} />
+          <Route path='/split' element={<QwikSplitPage/>}/>
          </Routes>
      </BrowserRouter>
    </>

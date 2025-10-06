@@ -14,15 +14,15 @@ export const Sidebar = () => {
                 </div>
                 <div className="flex  p-[20px] font-bold text-l space-x-3">
                     <div className="mt-[2px]"><FaSearch/></div>
-                    <div><Link>EXPLORE</Link></div>
+                    <div><Link to={"/HomePage"}>EXPLORE</Link></div>
                 </div>
                   <div className="flex  p-[20px] font-bold text-l space-x-3">
                     <div className="mt-[2px]"><FaExchangeAlt/></div>
-                    <div><Link>TRANSFER</Link></div>
+                    <div><Link to={"/payMoney"}>TRANSFER</Link></div>
                 </div>
                   <div className="flex p-[20px] font-bold text-l space-x-3">
                     <div className="mt-[2px]"><FaHistory/></div>
-                    <div><Link>TRANSACTIONS</Link></div>
+                    <div><Link to={"/paymentHistory"}>TRANSACTIONS</Link></div>
                 </div>
             </div>
              </div>

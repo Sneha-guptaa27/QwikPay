@@ -5,7 +5,7 @@ const TransactionSchema = new Schema({
   _id: { type: String, required: true },
   accountId: { type: String, ref: "Account", index: true, required: true },
   type: { type: String, enum: ["debit","credit"], required: true },
-  channel: { type: String, enum: ["internal","upi","card","netbanking","wallet","mock"], default: "internal" },
+  channel: { type: String, enum: ["internal","upi","card","netbanking","wallet","mock","razorpay"], default: "internal" },
   counterparty: {
     upiId: String,
     userId: String,
