@@ -11,7 +11,7 @@ router.get("/attachment/text/:id", authMiddleware, expCtrl.getAttachmentText);
 // NEW Excel endpoints:
 router.post('/attachment/xls', authMiddleware, expCtrl.uploadXls);
 router.post('/attachment/:id/commit', authMiddleware, expCtrl.commitXls);
-
+router.get("/expenses", authMiddleware, expCtrl.getExpenses);
 
 
 module.exports = router;

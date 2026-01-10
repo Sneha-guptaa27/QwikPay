@@ -176,48 +176,59 @@ export function ExternalPayment() {
     }
   };
 
-  return (
-    <div className="h-screen w-screen flex justify-center bg-primary">
-      <div className="flex flex-col justify-center">
-        <div className="w-[500px] h-max rounded-lg text-center p-8 bg-white shadow-lg">
-          <Heading title={"TRANSFER MONEY EXTERNALLY"} />
-          <div className="mt-[20px] space-y-3 text-left">
-            <Input
-              label={"Receiver's Name"}
-              placeholder={"Enter Name Of Receiver"}
-              onChange={(e) => setPayee(e.target.value)}
-              value={payee}
-            />
-            <Input
-              label={"Amount (₹)"}
-              placeholder={"e.g. 199.50"}
-              onChange={(e) => setAmountInput(e.target.value)}
-              value={amountInput}
-            />
-            <Input
-              label={"Note"}
-              placeholder={"Enter message for receiver"}
-              onChange={(e) => setNote(e.target.value)}
-              value={note}
-            />
-            <Dropdown
-              label={"Payment Method"}
-              placeholder={"Select Method"}
-              onChange={setMethod}
-              options={[
-                { label: "UPI (Razorpay)", value: "upi" },
-                { label: "Card (Razorpay)", value: "card" },
-                { label: "Netbanking (Razorpay)", value: "netbanking" },
-                { label: "Wallet (Razorpay)", value: "wallet" },
-                { label: "Mock (no Razorpay)", value: "mock" },
-              ]}
-              value={method}
-            />
-            <Button label={busy ? "Processing..." : "Send Money"} onClick={handleTransfer} disabled={busy} />
-          </div>
+return (
+  <div className="flex justify-center">
+    <div className="flex flex-col justify-center mt-10">
+      <div className="w-[500px] rounded-lg text-center p-8 bg-white shadow-lg">
+        <Heading title={"TRANSFER MONEY EXTERNALLY"} />
+
+        <div className="mt-[20px] space-y-3 text-left">
+          <Input
+            label={"Receiver's Name"}
+            placeholder={"Enter Name Of Receiver"}
+            onChange={(e) => setPayee(e.target.value)}
+            value={payee}
+          />
+
+          <Input
+            label={"Amount (₹)"}
+            placeholder={"e.g. 199.50"}
+            onChange={(e) => setAmountInput(e.target.value)}
+            value={amountInput}
+          />
+
+          <Input
+            label={"Note"}
+            placeholder={"Enter message for receiver"}
+            onChange={(e) => setNote(e.target.value)}
+            value={note}
+          />
+
+          <Dropdown
+            label={"Payment Method"}
+            placeholder={"Select Method"}
+            onChange={setMethod}
+            value={method}
+            options={[
+              { label: "UPI (Razorpay)", value: "upi" },
+              { label: "Card (Razorpay)", value: "card" },
+              { label: "Netbanking (Razorpay)", value: "netbanking" },
+              { label: "Wallet (Razorpay)", value: "wallet" },
+              { label: "Mock (no Razorpay)", value: "mock" },
+            ]}
+          />
+
+          <Button
+            label={busy ? "Processing..." : "Send Money"}
+            onClick={handleTransfer}
+            disabled={busy}
+          />
         </div>
       </div>
+
       <ReactToastContainer type={toast.type} message={toast.message} />
     </div>
-  );
+  </div>
+);
+
 }

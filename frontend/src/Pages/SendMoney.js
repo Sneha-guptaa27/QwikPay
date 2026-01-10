@@ -34,7 +34,7 @@ export const SendMoney = () => {
             <div className="">
               <Button label={"Send Money"} onClick={async () => {
                 const token = localStorage.getItem("token");
-                await axios.post("http://localhost:3000/api/v1/account/transferAmount", { amount: amount, to: id }, { headers: { Authorization: "Bearer " + token } }).then(response => {
+                await api.post("/api/v1/account/transferAmount", { amount: amount, to: id }, { headers: { Authorization: "Bearer " + token } }).then(response => {
                   if (response) {
                     setToast({ type: "success", message: "Transaction Successful" })
                     setTimeout(() => {

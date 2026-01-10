@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { Button } from "./Button";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { computeHeadingLevel } from "@testing-library/dom";
+import api from "../API/api";
+
 
 export const Users = () => {
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState("");
   
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/v1/user/userDetails?searchVal=" + filter)
+    api
+      .get("/user/userDetails?searchVal=" + filter)
       .then((response) => {
         setUsers(response.data.user);
       });

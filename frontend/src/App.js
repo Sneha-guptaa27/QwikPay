@@ -1,10 +1,7 @@
-import logo from './logo.svg';
-import ReactDom from "react-dom/client"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { SignUp } from './Pages/SignUp';
 import './App.css';
 import { SignIn } from './Pages/SignIn';
-import { Dashboard } from './Pages/PayMoney';
 import { LandingPage } from './Pages/LandingPage';
 import { HomePage } from './Pages/HomePage';
 import { OtpVerification } from './Pages/OtpVerification';
@@ -27,7 +24,6 @@ function App() {
           <Route path='/signIn' element={<SignIn />} />
           <Route path='/' element={<LandingPage />} />
           <Route path='/HomePage' element={<HomePage/> } />
-          <Route path='/dashboard' element={<Dashboard/>} />
           <Route path="/otpVerify" element={<OtpVerification />} />
           <Route path='/registeredUser' element={<RegisteredUser />} />
           <Route path='/accountCreation' element={<AccountCreation />} />

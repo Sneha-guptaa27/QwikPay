@@ -14,7 +14,7 @@ async function createUPIFromPhone(phone) {
 exports.createAccount = async function (req, res) {
   const user = req.user;
   console.log(user);
-    const { holderName, bankName, accountNumber, ifsc, pan, initialBalancePaise } = req.body;
+    const { holderName, bankName, accountNumber, ifsc, pan, initialBalancePaise, expenseBudget } = req.body;
     if (!accountNumber || !pan) {
         res.status(400).json("Account Number and Pan are required Fields")
     }
@@ -28,7 +28,8 @@ exports.createAccount = async function (req, res) {
     ifsc,
     pan,
     upiId:upiId,
-    currentBalance: initialBalancePaise
+    currentBalance: initialBalancePaise,
+    expenseBudget: expenseBudget || 5000,
   });
   return res.json(acc);
 };
@@ -38,3 +39,8 @@ exports.getMyAccounts = async function (req, res) {
   const accounts = await Account.find({ userId: user._id });
   res.json(accounts);
 };
+
+
+
+
+

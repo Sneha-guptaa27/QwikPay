@@ -7,6 +7,7 @@ import { SubHeading } from "../Components/SubHeading"
 import axios from "axios"
 import { useState } from "react"
 import ReactToastContainer from "../Components/toast"
+import api from "../API/api"
 
 
 export const SignIn = () => {
@@ -30,7 +31,7 @@ export const SignIn = () => {
                     <Button label={"Sign In"} onClick={
                         async() => {
                             try {
-                                const response =await axios.post("http://localhost:3000/api/v1/user/signIn", { username: userName, password: passWord });
+                                const response =await api.post("/user/signIn", { username: userName, password: passWord });
                                 localStorage.setItem("token", response.data.token);
                                 navigate("/HomePage");
                             }

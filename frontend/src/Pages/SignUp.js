@@ -7,6 +7,7 @@ import { SubHeading } from "../Components/SubHeading"
 import { useNavigate } from "react-router-dom"
 import ReactToastContainer from "../Components/toast"
 import api from "../API/api"
+import axios from "axios"
 
 export const SignUp = () => {
     const [firstName, setFirstname] = useState("");

@@ -4,7 +4,6 @@ import { Heading } from "../Components/Heading";
 import { Input } from "../Components/Input";
 import { SubHeading } from "../Components/SubHeading";
 import { useState } from "react";
-import axios from "axios";
 import ReactToastContainer from "../Components/toast";
 import api from "../API/api";
 
@@ -47,7 +46,7 @@ export const OtpVerification = () => {
             onClick={async () => {
               try {
                 const verify = await api.post(
-                  "/auth/otp/verify",
+                  "/api/v1/auth/otp/verify",
                   {userData:userData ,target:email,code:otp,context:context }
                 );
                 localStorage.setItem("token", verify.data.access);

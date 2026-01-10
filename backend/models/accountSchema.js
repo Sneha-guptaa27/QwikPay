@@ -11,6 +11,7 @@ const AccountSchema = new Schema({
   pan: { type: String, required: true },
   upiId: { type: String, unique: true, required: true },
   currentBalance: { type: Number, default: 0 }, // paise
+  expenseBudget: { type: Number, default: 5000 }, // paise
   isPrimary: { type: Boolean, default: true }
 }, { timestamps: true });
 

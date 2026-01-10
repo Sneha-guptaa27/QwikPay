@@ -23,12 +23,8 @@
     "recharts": "^3.2.0",
     "web-vitals": "^2.1.4"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
+   "scripts": { "start": "react-scripts start", "build": "react-scripts build" } ,
+   "proxy": "http://localhost:3000",
   "eslintConfig": {
     "extends": [
       "react-app",

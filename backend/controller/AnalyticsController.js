@@ -1,99 +1,201 @@
 const Expense = require("../models/Expense");
-const TZ = "Asia/Kolkata";
 
-// build user/date matcher
-function buildMatch(userId, from, to) {
-  const m = { userId, date: { $type: "date" } };
-  if (from || to) {
-    m.date = {};
-    if (from) m.date.$gte = new Date(from);
-    if (to)   m.date.$lte = new Date(to);
-  }
-  return m;
-}
+/*
+FINAL FINANCIAL LOGIC (for YOUR app):
 
-// ---------- PIE: NET spend by category (credits reduce spend) ----------
+• amount is stored in PAISE
+• Negative  → expense
+• Positive  → refund / cashback
+• ALL categories INCLUDED (including TRANSFER)
+• NET SPEND = ABS(SUM(amount))
+• Convert to RUPEES at the END
+*/
+
+// ===============================
+// 🥧 PIE CHART – NET Spend by Category
+// ===============================
 exports.byCategory = async (req, res) => {
   try {
-    const { from, to } = req.query;
     const userId = req.user._id;
-    const match = buildMatch(userId, from, to);
 
-    const rows = await Expense.aggregate([
-      { $match: match },
+    const month = Number(req.query.month);
+    const year = Number(req.query.year);
+
+    const now = new Date();
+    const m = month ? month - 1 : now.getMonth();
+    const y = year || now.getFullYear();
+
+    // filter by TRANSACTION date
+    const startDate = new Date(Date.UTC(y, m, 1));
+    const endDate = new Date(Date.UTC(y, m + 1, 1));
+
+    const data = await Expense.aggregate([
+      {
+        $match: {
+          userId,
+          date: { $gte: startDate, $lt: endDate },
+        },
+      },
+      {
+        $addFields: {
+          amountPaise: { $toLong: "$amount" },
+          categoryUpper: {
+            $cond: [
+              { $ifNull: ["$category", false] },
+              { $toUpper: "$category" },
+              "OTHER",
+            ],
+          },
+        },
+      },
       {
         $group: {
-          _id: { $ifNull: ["$category", "UNCATEGORIZED"] },
-          netPaise: { $sum: "$amount" } // debits negative, credits positive
-        }
+          _id: "$categoryUpper",
+          netPaise: { $sum: "$amountPaise" },
+        },
       },
+
+      // ✅ REAL SPENDING ONLY
+      {
+        $match: {
+          netPaise: { $lt: 0 },
+          _id: { $ne: "TRANSFER" },
+        },
+      },
+
       {
         $project: {
           _id: 0,
           category: "$_id",
-          // spend = max(0, -net)
-          totalPaise: {
-            $cond: [{ $lt: ["$netPaise", 0] }, { $multiply: ["$netPaise", -1] }, 0]
-          }
-        }
+          total: {
+            $round: [
+              { $divide: [{ $abs: "$netPaise" }, 100] },
+              2,
+            ],
+          },
+        },
       },
-      { $sort: { totalPaise: -1 } }
+
+      { $sort: { total: -1 } },
     ]);
 
-    res.json(rows.map(r => ({
-      category: r.category,
-      total: Math.round(r.totalPaise) / 100
-    })));
-  } catch (e) {
-    console.error("byCategory error:", e);
+    res.json(data);
+  } catch (err) {
+    console.error("byCategory error:", err);
     res.status(500).json({ error: "server_error" });
   }
 };
 
-// ---------- BAR: NET spend per month (IST), cap to latest txn if no range ----------
+
+// ===============================
+// 📊 BAR GRAPH – NET Monthly Spend
+// ===============================
+// ===============================
+// 📊 BAR GRAPH – Monthly Spend
+// ===============================
 exports.byMonth = async (req, res) => {
   try {
-    const { from, to } = req.query;
     const userId = req.user._id;
 
-    const match = buildMatch(userId, from, to);
+    const data = await Expense.aggregate([
+      // 1️⃣ Only this user
+      { $match: { userId } },
 
-    // If no explicit range, cap to latest real txn date (debit or credit)
-    if (!from && !to) {
-      const [mx] = await Expense.aggregate([
-        { $match: { userId, date: { $type: "date" } } },
-        { $group: { _id: null, maxDate: { $max: "$date" } } }
-      ]);
-      if (mx?.maxDate) {
-        match.date = match.date || {};
-        match.date.$lte = mx.maxDate;
-      }
-    }
+      // 2️⃣ ONLY MONEY SPENT (NEGATIVE AMOUNTS)
+      { $match: { amount: { $lt: 0 } } },
 
-    const rows = await Expense.aggregate([
-      { $match: match },
-      { $addFields: { mstart: { $dateTrunc: { date: "$date", unit: "month", timezone: TZ } } } },
-      { $group: { _id: "$mstart", netPaise: { $sum: "$amount" } } }, // sum debits+credits
-      { $sort: { _id: 1 } },
+      // 3️⃣ Normalize date
+      {
+        $addFields: {
+          dateObj: { $toDate: "$date" },
+        },
+      },
+
+      // 4️⃣ Group by month + year
+      {
+        $group: {
+          _id: {
+            year: { $year: "$dateObj" },
+            month: { $month: "$dateObj" },
+          },
+          spentPaise: { $sum: "$amount" }, // sum of negatives
+        },
+      },
+
+      // 5️⃣ Sort chronologically
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+
+      // 6️⃣ Convert to rupees
       {
         $project: {
           _id: 0,
-          month: { $dateToString: { date: "$_id", format: "%m-%Y", timezone: TZ } },
-          // spend = max(0, -net)
-          spendPaise: {
-            $cond: [{ $lt: ["$netPaise", 0] }, { $multiply: ["$netPaise", -1] }, 0]
-          }
-        }
-      }
+          month: {
+            $concat: [
+              { $toString: "$_id.month" },
+              "-",
+              { $toString: "$_id.year" },
+            ],
+          },
+          total: {
+            $round: [
+              { $divide: [{ $abs: "$spentPaise" }, 100] },
+              2,
+            ],
+          },
+        },
+      },
     ]);
 
-    res.json(rows.map(r => ({
-      month: r.month,
-      total: Math.round(r.spendPaise) / 100
-    })));
-  } catch (e) {
-    console.error("byMonth error:", e);
+    res.json(data);
+  } catch (err) {
+    console.error("byMonth error:", err);
     res.status(500).json({ error: "server_error" });
   }
 };
+//money received 
+exports.monthlyIncome = async (req, res) => {
+  try {
+    const userId = req.user._id;
 
+    const year = Number(req.query.year) || new Date().getFullYear();
+
+    const startDate = new Date(Date.UTC(year, 0, 1));
+    const endDate = new Date(Date.UTC(year + 1, 0, 1));
+
+    const data = await Expense.aggregate([
+      {
+        $match: {
+          userId,
+          date: { $gte: startDate, $lt: endDate },
+          amount: { $gt: 0 }, // ✅ money received
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$date" },
+          totalPaise: { $sum: "$amount" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          month: "$_id",
+          total: {
+            $round: [{ $divide: ["$totalPaise", 100] }, 2],
+          },
+        },
+      },
+      { $sort: { month: 1 } },
+    ]);
+
+    res.json(data);
+  } catch (err) {
+    console.error("monthlyIncome error:", err);
+    res.status(500).json({ error: "server_error" });
+  }
+};

@@ -1,5 +1,4 @@
 const router = require("express").Router();
-
 const paymentCtrl = require("../controller/PaymentController");
 const { authMiddleware } = require("../Middleware/authmiddleware");
 

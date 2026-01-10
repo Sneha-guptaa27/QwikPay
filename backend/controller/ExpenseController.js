@@ -91,19 +91,70 @@ function extractOcrDate(text) {
 
 // ---------------- list with filters ----------------
 exports.list = async function (req, res) {
-  const { from, to, category, payee, min, max } = req.query;
-  const q = { userId: req.user._id };
-  if (from || to) q.date = {};
-  if (from) q.date.$gte = new Date(from);
-  if (to) q.date.$lte = new Date(to);
-  if (category) q.category = category;
-  if (payee) q.payee = new RegExp(payee, "i");
-  if (min || max) q.amount = {};
-  if (min) q.amount.$gte = Number(min);
-  if (max) q.amount.$lte = Number(max);
+  try {
+    const {
+      from,
+      to,
+      category,
+      payee,
+      min,
+      max,
+      page = 1,
+      limit = 10,
+    } = req.query;
 
-  const items = await Expense.find(q).sort({ date: -1 }).limit(500);
-  res.json(items);
+    const q = { userId: req.user._id };
+
+    // 📅 Date filter (transaction date)
+    if (from || to) {
+      q.date = {};
+      if (from) q.date.$gte = new Date(from);
+      if (to) q.date.$lte = new Date(to);
+    }
+
+    // 🏷 Category filter
+    if (category) {
+      q.category = category;
+    }
+
+    // 👤 Payee search (case-insensitive)
+    if (payee) {
+      q.payee = new RegExp(payee, "i");
+    }
+
+    // 💰 Amount filter (PAISE)
+    if (min || max) {
+      q.amount = {};
+      if (min) q.amount.$gte = Number(min) * 100;
+      if (max) q.amount.$lte = Number(max) * 100;
+    }
+
+    const pageNum = Math.max(Number(page), 1);
+    const limitNum = Math.min(Number(limit), 50);
+    const skip = (pageNum - 1) * limitNum;
+
+    // ⚡ Parallel queries (fast)
+    const [items, total] = await Promise.all([
+      Expense.find(q)
+        .sort({ date: -1 })
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
+
+      Expense.countDocuments(q),
+    ]);
+
+    res.json({
+      items,
+      page: pageNum,
+      limit: limitNum,
+      total,
+      totalPages: Math.ceil(total / limitNum),
+    });
+  } catch (err) {
+    console.error("Expense list error:", err);
+    res.status(500).json({ error: "server_error" });
+  }
 };
 
 // ---------------- manual create ----------------
@@ -305,5 +356,36 @@ exports.commitXls = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "commit_failed", message: err.message });
+  }
+};
+
+exports.getExpenses = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const limit = Math.min(Number(req.query.limit) || 10, 50);
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await Promise.all([
+      Expense.find({ userId })
+        .sort({ date: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+
+      Expense.countDocuments({ userId }),
+    ]);
+
+    res.json({
+      items,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (err) {
+    console.error("getExpenses error:", err);
+    res.status(500).json({ error: "server_error" });
   }
 };

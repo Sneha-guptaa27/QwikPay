@@ -1,33 +1,42 @@
-import React from 'react'
-import { Sidebar } from '../Components/Siderbar'
-import { Navbar } from '../Components/Navbar'
-import { Appbar } from '../Components/Appbar'
-import { MainCard } from '../Components/MainCard'
-import { useSearchParams } from 'react-router-dom'
-import CategoryPieChart from '../Components/Charts/CategoryPieChart'
-import MonthlyBarChart from '../Components/Charts/MonthlyBarChart'
+import React from "react";
+import { Sidebar } from "../Components/Siderbar";
+import { Appbar } from "../Components/Appbar";
+import { MainCard } from "../Components/MainCard";
+import CategoryPieChart from "../Components/Charts/CategoryPieChart";
+import MonthlyBarChart from "../Components/Charts/MonthlyBarChart";
+import MonthlyIncomeBarChart from "../Components/Charts/MonthlyIncomeBarChart";
 
 export const HomePage = () => {
-  const [searchParams] = useSearchParams();
-
   return (
-    <div className="h-full w-full flex flex-col relative">
+    <div className="min-h-screen w-full flex flex-col bg-gray-50">
       <Appbar />
-      <div className="flex">
-        <Sidebar />
-        <div className="flex flex-col ml-[40px] mt-[40px] gap-6 pr-6">
-          <div className="mt-[15px]">
-            <MainCard />
-          </div>
 
-          {/* Analytics Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <CategoryPieChart />
-            <MonthlyBarChart />
+      <div className="flex flex-1">
+        <Sidebar />
+
+        {/* MAIN CONTENT */}
+        <div className="flex-1 px-6 py-6">
+          <div className="max-w-7xl mx-auto flex flex-col gap-6">
+
+            {/* Main card */}
+            <MainCard />
+
+            {/* Row 1: Pie + Monthly Spend */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <CategoryPieChart />
+              <MonthlyBarChart />
+            </div>
+
+            {/* Row 2: Income (centered) */}
+            <div className="flex justify-center">
+              <div className="w-full lg:w-2/3">
+                <MonthlyIncomeBarChart />
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
     </div>
-  )
-}
-
+  );
+};

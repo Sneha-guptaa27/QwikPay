@@ -1,4 +1,4 @@
-import axios from 'axios';
+
 import React, { useEffect, useState } from 'react'
 import api from '../API/api';
 import { Heading } from './Heading';
@@ -45,7 +45,7 @@ export function SendMoney(){
         }
     }
   return (
-      <div className="h-screen w-screen flex justify-center bg-primary">
+      <div className="flex justify-center bg-primary">
                <div className="flex flex-col justify-center ">   
               <div className=" w-[500px] h-max rounded-lg text-center p-8 bg-white shadow-lg">
                   <Heading title={"TRANSFER MONEY"} />

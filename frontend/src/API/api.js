@@ -1,49 +1,28 @@
+// api.js
 import axios from "axios";
 
+const API_BASE = (process.env.REACT_APP_API_BASE_URL || "").trim();
+const baseURL = API_BASE ? `${API_BASE}/api/v1` : "/api/v1";
+
 const api = axios.create({
-  baseURL: "http://localhost:3000/api/v1",
-  withCredentials: true // send refresh cookie
+  baseURL,
+  withCredentials: true,
+  // ❌ don't force "Content-Type": "application/json" here
 });
 
-// Add token to every request
-api.interceptors.request.use(config => {
+// Add token, but **drop** JSON content-type when sending FormData
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
+
+  // If we're sending FormData, let the browser set the correct multipart headers
+  if (config.data instanceof FormData) {
+    // axios v1 headers can be nested; clear all possible places
+    delete config.headers["Content-Type"];
+    delete config.headers.common?.["Content-Type"];
+    delete config.headers.post?.["Content-Type"];
+  }
   return config;
 });
-
-// Auto-refresh if 401 from expired access token
-api.interceptors.response.use(
-  res => {
-    const newAccessToken = res.headers["x-new-access-token"];
-    if (newAccessToken) {
-      localStorage.setItem("token", newAccessToken);
-    }
-    return res;
-  },
-  async error => {
-    const originalRequest = error.config;
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        const refreshRes = await axios.post(
-          "http://localhost:3000/api/v1/auth/refresh",
-          {},
-          { withCredentials: true }
-        );
-        console.log(refreshRes);
-        const newToken = refreshRes.data.access;
-        localStorage.setItem("token", newToken);
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        return api(originalRequest); // retry
-      } catch (refreshErr) {
-        console.error("Refresh failed", refreshErr);
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
 
 export default api;

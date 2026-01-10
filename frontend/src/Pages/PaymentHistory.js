@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import api from "../API/api";
 import { Heading } from "../Components/Heading";
+import { Appbar } from "../Components/Appbar";
+import { Sidebar } from "../Components/Siderbar";
 
 const PRIMARY = "#F9F3EF";
 const SECONDARY = "#456882";
@@ -102,8 +104,16 @@ export default function PaymentHistory() {
   );
 
   return (
-    <div className="min-h-screen" style={{ background: `linear-gradient(180deg, ${PRIMARY}, #ffffff 30%)` }}>
-      <div className="max-w-6xl mx-auto p-6 md:p-10 space-y-6">
+
+ <div className="min-h-screen w-full flex flex-col bg-gray-50">
+          <Appbar />
+    
+          <div className="flex flex-1">
+            <Sidebar />
+
+       
+       <div className="min-h-screen my-2" style={{ background: `linear-gradient(180deg, ${PRIMARY}, #ffffff 30%)` }}>
+      <div className="max-w-6xl mx-auto p-7 md:p-10 space-y-7 ">
         {/* Header */}
         <div className="rounded-xl p-4" style={{ background: PRIMARY, border: `1px solid ${SECONDARY}` }}>
           <Heading title={"PAYMENT HISTORY"} />
@@ -302,6 +312,11 @@ export default function PaymentHistory() {
           </div>
         </div>
       </div>
+    </div> 
+
+
+      </div>
     </div>
+
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button } from "../Components/Button";
 import api from "../API/api";
 import { Navbar } from "../Components/Navbar";
@@ -8,6 +8,7 @@ import { Heading } from "../Components/Heading";
 import { SubHeading } from "../Components/SubHeading";
 import { Input } from "../Components/Input";
 import ReactToastContainer from "../Components/toast";
+import { UserContext } from "../userContext";
 
 const AccountCreation = () => {
   const [open, setOpen] = useState(false);
@@ -18,6 +19,8 @@ const AccountCreation = () => {
   const [pan, setPAN] = useState("");
   const [toast, setToast] = useState("");
   const [initialBalance, setInitialBalance] = useState();
+  const { expenseBudget, setExpenseBudget } = useContext(UserContext);
+  const [expenseInput, setExpenseInput] = useState("");
 
   return (
     <div className="h-full w-full flex flex-col relative scroll-auto">
@@ -28,7 +31,7 @@ const AccountCreation = () => {
             <div className="flex mt-[15px] justify-center w-[500px] h-[80px]">
             <Button label={"ADD ACCOUNT"} onClick={()=>setOpen(true)} />
           </div>
-         {open && (<div className="w-[500px] h-[730px] bg-primary mt-[20px] flex flex-col items-center">
+         {open && (<div className="w-[500px] h-[800px] bg-primary mt-[20px] flex flex-col items-center">
             <Heading title={"Create Account"} />
             <SubHeading label={"Enter Your Bank Details"} />
             <div className="flex flex-col mt-[30px] w-[400px]">
@@ -38,15 +41,19 @@ const AccountCreation = () => {
               <Input label={"IFSC"} placeholder={"Enter your IFSC number"} onChange={(e)=>setIFSC(e.target.value)}/>
               <Input label={"Permanent Account Number"} placeholder={"Enter your PAN Number"} onChange={(e) => setPAN(e.target.value)} />
               <Input label={"Initial Balance"} placeholder={"Enter your initial bank balance"} onChange={(e)=>{setInitialBalance(e.target.value)}}/>
+              <Input label={"Expense Budget"} placeholder={"Enter your expense budget"} onChange={(e) => { setExpenseInput(e.target.value) }} />
               <Button label={"Submit Details"} onClick={
                 async () => {
                   try {
+                    setExpenseBudget(Number(expenseInput));
+                    localStorage.setItem("expenseBudget", Number(expenseInput));
+                    console.log("expenseBudget set to:", Number(expenseInput));
                     // const token = localStorage.getItem("token");
                     // if (!token) {
                     // const refreshToken = await api.post("/auth/refresh");
                     // localStorage.setItem("refreshToken",refreshToken);
-                    // }  
-                    await api.post("/account/create", { holderName, bankName, accountNumber, ifsc, pan, initialBalancePaise:initialBalance }, { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }).then(
+                    // }
+                    await api.post("/account/create", { holderName, bankName, accountNumber, ifsc, pan, initialBalancePaise:initialBalance, expenseBudget}, { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }).then(
                       setOpen(false)
                     )
                     

@@ -5,8 +5,6 @@ import { SubHeading } from "../Components/SubHeading";
 import { Button } from "../Components/Button";
 import { useNavigate } from "react-router-dom";
 import ReactToastContainer from "../Components/toast";
-import axios from "axios";
-import Axios from "../API/api";
 import api from "../API/api";
 
 export const RegisteredUser = () => {

@@ -7,6 +7,11 @@ const Account = require("../models/accountSchema");
 const Transaction = require("../models/Transaction");
 
 // ---------- Razorpay Client ----------
+
+// fail fast if keys are missing
+if (!process.env.RAZORPAY_KEY || !process.env.RAZORPAY_SECRET) {
+  throw new Error("Missing RAZORPAY_KEY / RAZORPAY_SECRET in env");
+}
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY,
   key_secret: process.env.RAZORPAY_SECRET,
