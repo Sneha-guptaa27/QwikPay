@@ -27,9 +27,15 @@ exports.requestOtp = async function (req, res) {
     expiresAt: dayjs().add(10, "minute").toDate()
   });
   // for dev send via email
-  if(channel === "email") {
+  if (channel === "email") {
+  try {
     await sendMail(target, "Your QwikPay OTP", `Your OTP is ${code}. It expires in 10 minutes.`);
-  } else {
+  } catch (err) {
+    console.error("sendMail failed:", err.message);
+    // do not throw
+  }
+}
+ else {
     // simulate SMS or log
     console.log("SMS OTP to", target, code);
   }
