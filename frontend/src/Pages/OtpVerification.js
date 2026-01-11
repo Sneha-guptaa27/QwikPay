@@ -46,7 +46,7 @@ export const OtpVerification = () => {
             onClick={async () => {
               try {
                 const verify = await api.post(
-                  "/api/v1/auth/otp/verify",
+                  "auth/otp/verify",
                   {userData:userData ,target:email,code:otp,context:context }
                 );
                 localStorage.setItem("token", verify.data.access);

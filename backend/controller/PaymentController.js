@@ -36,8 +36,8 @@ async function internalTransfer({ fromId, toUpiId, amountPaise, note, idempotenc
     if (!to) throw new Error("to_not_found");
     if (from.currentBalance < amountPaise) throw new Error("insufficient_balance");
 
-    from.currentBalance -= amountPaise;
-    to.currentBalance += amountPaise;
+    from.currentBalance -= (amountPaise);
+    to.currentBalance += (amountPaise);
     await from.save({ session });
     await to.save({ session });
 
@@ -160,7 +160,7 @@ exports.verifyExternalPayment = async function (req, res) {
       if (!from) throw new Error("from_not_found");
       if (from.currentBalance < amountPaise) throw new Error("insufficient_balance"); // re-check
 
-      from.currentBalance -= amountPaise;
+      from.currentBalance -= (amountPaise / 100);
       await from.save({ session });
 
       const tx = await Transaction.create([{

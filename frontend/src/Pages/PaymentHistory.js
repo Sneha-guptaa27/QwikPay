@@ -95,11 +95,11 @@ export default function PaymentHistory() {
   }, [txs, filters]);
 
   const totalSent = useMemo(
-    () => filtered.filter((t) => t.type === "debit").reduce((s, t) => s + t.amountPaise, 0) / 100,
+    () => filtered.filter((t) => t.type === "debit").reduce((s, t) => s + t.amountPaise, 0),
     [filtered]
   );
   const totalRecv = useMemo(
-    () => filtered.filter((t) => t.type === "credit").reduce((s, t) => s + t.amountPaise, 0) / 100,
+    () => filtered.filter((t) => t.type === "credit").reduce((s, t) => s + t.amountPaise, 0),
     [filtered]
   );
 
@@ -246,7 +246,7 @@ export default function PaymentHistory() {
                   const sent = t.type === "debit";
                   const method = t.channel || "—";
                   const cp = t.counterparty?.name || t.counterparty?.upiId || t.counterparty?.userId || "—";
-                  const amt = t.amountPaise / 100;
+                  const amt = t.amountPaise ;
 
                   return (
                     <tr key={t.id || i} style={{ borderTop: `1px solid ${SECONDARY}`, background: i % 2 ? PRIMARY : "#fff" }}>

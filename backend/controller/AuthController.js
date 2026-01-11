@@ -74,7 +74,8 @@ exports.verifyOtp = async function (req, res) {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict",
-  maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+  path: "/", // ✅ add this
+  maxAge: 30 * 24 * 60 * 60 * 1000
 });
   res.json({ access: tokens.access, user , refresh:tokens.refresh });
 };

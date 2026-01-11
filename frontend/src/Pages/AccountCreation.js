@@ -48,12 +48,14 @@ const AccountCreation = () => {
                     setExpenseBudget(Number(expenseInput));
                     localStorage.setItem("expenseBudget", Number(expenseInput));
                     console.log("expenseBudget set to:", Number(expenseInput));
-                    // const token = localStorage.getItem("token");
-                    // if (!token) {
-                    // const refreshToken = await api.post("/auth/refresh");
-                    // localStorage.setItem("refreshToken",refreshToken);
-                    // }
-                    await api.post("/account/create", { holderName, bankName, accountNumber, ifsc, pan, initialBalancePaise:initialBalance, expenseBudget}, { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }).then(
+                    const token = localStorage.getItem("token");
+                    if (!token) {
+                      const refreshToken = await api.post("/auth/refresh");
+                      console.log("New access token:", refreshToken);
+                      localStorage.setItem("refreshToken",refreshToken); 
+                    }
+                    console.log(token);
+                    await api.post("/account/create", { holderName, bankName, accountNumber, ifsc, pan, initialBalance:initialBalance, expenseBudget}, { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }).then(
                       setOpen(false)
                     )
                     
