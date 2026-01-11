@@ -14,5 +14,7 @@ app.use("/api/v1", rootRouter);
 
 database.connect();
 
-const PORT = process.env.PORT || 3000; // 2) read port from env (avoid 3000)
+const PORT = process.env.PORT || 3000;
+//  read port from env (avoid 3000)
+app.get("/", (req, res) => res.send("API is running ✅"));
 app.listen(PORT, () => console.log(`API running on ${PORT}`));
