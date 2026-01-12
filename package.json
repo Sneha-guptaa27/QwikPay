@@ -1,16 +1,17 @@
 {
   "name": "payment-app",
   "private": true,
- "scripts": {
-  "dev": "concurrently -n API,WEB -c magenta,cyan \"npm run server\" \"npm run client\"",
-  "server": "cross-env NODE_ENV=development nodemon backend/index.js",
-  "client": "npm --prefix frontend start"
-}
-
-,
+  "scripts": {
+    "dev": "concurrently -n API,WEB -c magenta,cyan \"npm run server\" \"npm run client\"",
+    "server": "cross-env NODE_ENV=development nodemon backend/index.js",
+    "client": "npm --prefix frontend start"
+  },
   "devDependencies": {
     "concurrently": "^9.2.1",
     "cross-env": "^7.0.3",
     "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "resend": "^6.7.0"
   }
 }

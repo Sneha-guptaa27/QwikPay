@@ -66,9 +66,8 @@ exports.verifyOtp = async function (req, res) {
   if(!user && context === "signup") {
     const uid = uuid();
     const userName = genUsernameFromTarget(target);
-    if (!userName) {
-  userName = "user_" + uid;  // guaranteed unique fallback
-}
+    if (!userName) userName = "user_" + uid;  // guaranteed unique fallback
+
     console.log(userName);
     user = await User.create({ _id: uid, userName:userName, email: target.includes("@") ? target : undefined, phoneNumber:userData.phoneNumber,firstName:userData.firstName,lastName:userData.lastName });
   }
