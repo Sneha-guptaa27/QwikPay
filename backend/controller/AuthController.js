@@ -40,7 +40,9 @@ exports.requestOtp = async function (req, res) {
     console.log("SMS OTP to", target, code);
   }
 
-  return res.json({ ok: true, requestId: otp._id });
+  return res.json({
+    ok: true, requestId: otp._id,
+  });
 };
 
 
