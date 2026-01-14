@@ -79,7 +79,7 @@ const options = {
   return (
     <div className="p-4 bg-white rounded-2xl shadow h-[420px]">
       <div className="flex justify-between mb-3 items-center">
-        <h3 className="text-lg font-semibold">Money Received</h3>
+        <h3 className="text-lg font-semibold">Money Received!</h3>
 
         <select
           value={year}
